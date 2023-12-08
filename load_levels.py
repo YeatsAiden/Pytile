@@ -2,9 +2,8 @@ from settings import *
 from core_funcs import *
 
 
-# Note "YoU CAn ONlY InDEnT YoUR CoDE 4 TiMeS" :p
-class Load_map:
-    def __init__(self, levels_dir):
+class Load_levels:
+    def __init__(self, levels_dir) -> None:
         self.level_paths = [path for path in get_file_names(levels_dir) if path.split('.')[1] == 'json']
         self.levels = {}
         for path in self.level_paths:
