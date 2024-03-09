@@ -1,0 +1,11 @@
+import pygame as pg
+import json
+import sys
+import os
+import math
+import time
+
+WINDOW_SIZE = WINDOW_WIDTH, WINDOW_HEIGHT = 960, 480
+DISPLAY_SIZE = DISPLAY_WIDTH, DISPLAY_HEIGHT = 240, 120
+DIS_RATIO = min(WINDOW_WIDTH / DISPLAY_WIDTH, WINDOW_HEIGHT / DISPLAY_HEIGHT)
+FLAGS = pg.RESIZABLE
