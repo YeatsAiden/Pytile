@@ -3,17 +3,15 @@ from core_funcs import *
 
 
 class Load_levels:
-    def __init__(self, levels_dir) -> None:
-        self.level_paths = [path for path in get_file_names(levels_dir) if path.split('.')[1] == 'json']
+    def __init__(self, tile_sets, levels_dir, tile_size) -> None:
         self.levels = {}
-        for path in self.level_paths:
+        for path in get_file_names(levels_dir):
             with open(levels_dir + '/' + path) as f:
-                self.level_json_data = json.load(f)
-                self.levels[path.split(".")[0]] = [layer for layer in self.level_json_data["layers"]]
-                self.tile_size = self.level_json_data["tilewidth"]
+                level_json_data = json.load(f)
+                self.levels[path.split(".")[0]] = level_json_data
 
-        self.tile_set_img = pg.image.load("assets/tileset/tile_set.png").convert_alpha()
-        self.images_dict = self.make_image_dict(self.tile_set_img)
+        self.tile_size = tile_size
+        self.tile_sets = tile_sets
 
 
     def make_rects_array(self, layers, offset):
@@ -35,28 +33,6 @@ class Load_levels:
             y += 1
 
         return array
-    
-    
-    def make_image_dict(self, tile_set_img):
-        # Find out yourself :\, I already forgor how it works
-        tile_imgs = {}
-        for y in range(0, tile_set_img.get_height(), self.tile_size):
-            for x in range(0, tile_set_img.get_width(), self.tile_size):
-                img = clip_img(tile_set_img, x, y, self.tile_size, self.tile_size)
-
-                if self.check_if_sprite_is_not_transparent(img):
-                    tile_imgs[y // self.tile_size * tile_set_img.get_width() // self.tile_size + x // self.tile_size + 1] = img
-        
-        return tile_imgs
-
-
-    def check_if_sprite_is_not_transparent(self, surf):
-        for y in range(0, surf.get_height()):
-            for x in range(0, surf.get_width()):
-                color = surf.get_at((x, y))
-                if color[3] > 0:
-                    return True
-        return False
 
 
     def get_area(self, surf, cam_pos, layers):
