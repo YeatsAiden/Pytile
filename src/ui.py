@@ -4,7 +4,7 @@ from core_funcs import *
 
 
 class Button:
-    def __init__(self, x, y, image):
+    def __init__(self, x: int, y: int, image: pg.Surface):
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.topleft = [x, y]
@@ -27,13 +27,55 @@ class Button:
         # return if clicked
         return click
 
-    def draw(self, surf):
+    def draw(self, surf: pg.Surface):
         surf.blit(self.image, (self.rect.x, self.rect.y))
 
         
 class Text:
-    def __init__(self) -> None:
-        characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()`~-_=+\\|[]}{';:/?.>,<"
+    def __init__(self, fonts_path: str) -> None:
+        self.characters = ["ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "0123456789", "!@#$%^&*()`~-_=+\\|[]}{';:/?.>,<"]
 
-        for letter in characters:
-            pass
+        self.fonts = {}
+        self.fonts["smol_font"] = self.load_font(fonts_path + "/" + "smol_font.png", [1, 2, 3], 1)
+    
+
+    def load_font(self, path: str, include: list, step: int):
+        font_img = pg.image.load(path).convert()
+        characters = []
+        font = {}
+        x_pos = 0
+        for x in range(font_img.get_width()):
+            for y in range(font_img.get_height()):
+                color = font_img.get_at((x, y))
+
+                if color == (255, 0, 0, 255):
+                    character = clip_img(font_img, x_pos, 0, x - x_pos, font_img.get_height())
+                    x_pos = x + 1
+
+                    if y == 1:
+                        cp_surface = character.copy()
+                        character = pg.Surface((cp_surface.get_width(), cp_surface.get_height() + step))
+                        character.blit(cp_surface, (0, step))
+                    characters.append(character)
+        
+        for i in include:
+            for character in self.characters[i]:
+                font[character] = characters[len(font)]
+        
+        return font
+    
+
+    def draw_text(self, surface: pg.Surface, text: str, font: str, x: int, y: int, space: int, size: int):
+        x_pos = 0
+        for letter in text:
+            if letter == " ":
+                x_pos += space * size
+            else:
+                character_img = pg.transform.scale_by(self.fonts[font][letter], size)
+                surface.blit(character_img, (x + x_pos, y))
+                x_pos += character_img.get_width() + size
+
+
+
+
+
