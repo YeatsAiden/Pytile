@@ -4,9 +4,9 @@ from core_funcs import *
 
 
 class Button:
-    def __init__(self, x: int, y: int, image: pg.Surface):
-        self.image = image
-        self.rect = self.image.get_rect()
+    def __init__(self, x: int, y: int, surface_path: pg.Surface):
+        self.button_img = pg.image.load(surface_path).convert()
+        self.rect = self.button_img.get_rect()
         self.rect.topleft = [x, y]
         self.clicked = False
     
@@ -28,7 +28,7 @@ class Button:
         return click
 
     def draw(self, surf: pg.Surface):
-        surf.blit(self.image, (self.rect.x, self.rect.y))
+        surf.blit(self.button_img, (self.rect.x, self.rect.y))
 
         
 class Text:

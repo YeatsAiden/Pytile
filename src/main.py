@@ -1,6 +1,6 @@
 from settings import *
 from load_levels import *
-from ui import Text
+from ui import Text, Button
 
 pg.init()
 
@@ -13,11 +13,14 @@ paths = {
     "tilesets_path": current_dir + "/assets/tilesets",
     "levels_path": current_dir + "/assets/levels",
     "fonts_path": current_dir + "/assets/fonts",
+    "buttons_path": current_dir + "/assets/buttons",
 }
 
 fps = 60
 
 text = Text(paths["fonts_path"])
+
+# new_layer = Button(display.get_width() - 32, display.get_height() - 32, paths["buttons_path"] + "/" + "new_layer.png")
 
 tile_size = 16
 tile_sets = {file.split('.')[0]: make_tileset_dict(paths['tilesets_path'] + "/" + file, tile_size) for file in get_file_names(paths['tilesets_path'])}
@@ -60,9 +63,8 @@ full_screen = False
 
 scroll = pg.Vector2(0, 0)
 
-scale = 0
 xy_change = [0, 0]
-
+# distance needed to make the display be in the center of the window
 window_pos = pg.Vector2(-window.get_width()/2, -window.get_height()/2)
 # Camera position
 
@@ -100,9 +102,11 @@ while True:
     pg.draw.line(display, (80, 80, 200), (0, 0 - scroll.y), (display.get_width(), 0 - scroll.y), 2)
     pg.draw.line(display, (200, 80, 80), (0 - scroll.x, 0), (0 - scroll.x, display.get_height()), 2)
 
+    # new_layer.draw(display)
+
     level_loader.draw_level(display, level_map, scroll)
 
-    text.draw_text(display, "hello world", "smol_font", 0 - scroll.x, 0 - scroll.y, 2, 5)
+    # text.draw_text(display, "hello world", "smol_font", 0 - scroll.x, 0 - scroll.y, 2, 5)
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -132,8 +136,8 @@ while True:
             current_layer = max(0, min(len(level_map["layers"]) - 1, current_layer))
                 
     # Resizing display to window size
-    display, xy_change = resize_surface(window, display)
-    window.blit(display, xy_change)
+    display_cp, xy_change = resize_surface(window, display)
+    window.blit(display_cp, xy_change)
 
     pg.display.update()
     dt = clock.tick(fps) / 1000
