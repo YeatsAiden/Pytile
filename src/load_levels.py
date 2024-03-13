@@ -16,7 +16,6 @@ class Load_levels:
 
         self.rects = self.make_rects_dict(self.levels)
 
-
     def make_rects_dict(self, levels: dict):
         rects = {}
         for level in levels:
@@ -32,7 +31,6 @@ class Load_levels:
                         rect = pg.Rect(x, y, self.tile_size, self.tile_size)
                         rects[level]["layers"][layer].append(rect)
         return rects
-
 
     def get_area(self, surf, cam_pos, layers):
         # This finds the area on the map that will be rendered using your camera
@@ -57,7 +55,6 @@ class Load_levels:
                 })
 
         return areas, [start_col, start_row]
-
 
     def draw_level(self, surf: pg.Surface, level: dict, scroll: pg.Vector2):
         for layer in level["layers"]:

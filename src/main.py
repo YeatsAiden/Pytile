@@ -1,6 +1,6 @@
 from settings import *
 from load_levels import *
-from ui import Text, Button
+from ui import Font, Button
 
 pg.init()
 
@@ -16,16 +16,13 @@ paths = {
     "buttons_path": current_dir + "/assets/buttons",
 }
 
-fps = 60
-
-text = Text(paths["fonts_path"])
+smol_font = Font(paths["fonts_path"] + "/" + "smol_font.png", [1, 2, 3], 1)
 
 # new_layer = Button(display.get_width() - 32, display.get_height() - 32, paths["buttons_path"] + "/" + "new_layer.png")
 
-tile_size = 16
-tile_sets = {file.split('.')[0]: make_tileset_dict(paths['tilesets_path'] + "/" + file, tile_size) for file in get_file_names(paths['tilesets_path'])}
+tile_sets = {file.split('.')[0]: make_tileset_dict(paths['tilesets_path'] + "/" + file, TILE_SIZE) for file in get_file_names(paths['tilesets_path'])}
 
-level_loader = Load_levels(tile_sets, paths["levels_path"], tile_size)
+level_loader = Load_levels(tile_sets, paths["levels_path"], TILE_SIZE)
 
 level_map = {
     "height": 1,
@@ -38,6 +35,7 @@ level_map = {
         }
     },
 }
+
 current_layer = 0
 # layer that is being edited
 tile_id = 0
@@ -59,7 +57,7 @@ def resize_surface(parent_surf : pg.Surface, child_surf : pg.Surface):
     return surf, xy_change
 
 
-full_screen = False
+
 
 scroll = pg.Vector2(0, 0)
 
@@ -87,26 +85,24 @@ while True:
     scroll.y += (window_pos.y - scroll.y)/5
 
     if mouse_pressed[0]:
-        level_map["layers"][current_layer]["data"][f"{mouse_x//tile_size}:{mouse_y//tile_size}"] = {
+        level_map["layers"][current_layer]["data"][f"{mouse_x//TILE_SIZE}:{mouse_y//TILE_SIZE}"] = {
             "type": type,
             "tile_set": tile_set,
             "tile_id": tile_id
         }
 
-    for y in range(int(window_pos.y)//tile_size, (int(window_pos.y) + display.get_height())//tile_size + 1):
-        pg.draw.line(display, (50, 50, 50), (0, y * tile_size - scroll.y), (display.get_width(), y * tile_size - scroll.y), 2)
+    for y in range(int(window_pos.y)//TILE_SIZE, (int(window_pos.y) + display.get_height())//TILE_SIZE + 1):
+        pg.draw.line(display, (50, 50, 50), (0, y * TILE_SIZE - scroll.y), (display.get_width(), y * TILE_SIZE - scroll.y), 2)
     
-    for x in range(int(window_pos.x)//tile_size, (int(window_pos.x) + display.get_width())//tile_size + 1):
-        pg.draw.line(display, (50, 50, 50), (x * tile_size - scroll.x, 0), (x * tile_size - scroll.x, display.get_height()), 2)
+    for x in range(int(window_pos.x)//TILE_SIZE, (int(window_pos.x) + display.get_width())//TILE_SIZE + 1):
+        pg.draw.line(display, (50, 50, 50), (x * TILE_SIZE - scroll.x, 0), (x * TILE_SIZE - scroll.x, display.get_height()), 2)
 
     pg.draw.line(display, (80, 80, 200), (0, 0 - scroll.y), (display.get_width(), 0 - scroll.y), 2)
     pg.draw.line(display, (200, 80, 80), (0 - scroll.x, 0), (0 - scroll.x, display.get_height()), 2)
 
-    # new_layer.draw(display)
-
     level_loader.draw_level(display, level_map, scroll)
 
-    # text.draw_text(display, "hello world", "smol_font", 0 - scroll.x, 0 - scroll.y, 2, 5)
+    smol_font.draw_text(display, str(current_layer), DISPLAY_WIDTH/2 - len(str(current_layer)) * 3, 370, 1, 3)
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -114,8 +110,8 @@ while True:
             sys.exit()
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_F11:
-                full_screen = not full_screen
-                pg.display.set_mode((0, 0), FLAGS | pg.FULLSCREEN) if full_screen else pg.display.set_mode(WINDOW_SIZE, FLAGS)
+                FULL_SCREEN = not FULL_SCREEN
+                pg.display.set_mode((0, 0), FLAGS | pg.FULLSCREEN) if FULL_SCREEN else pg.display.set_mode(WINDOW_SIZE, FLAGS)
 
             if event.key == pg.K_n:
                 level_map["layers"][len(level_map["layers"])] = {
@@ -140,4 +136,4 @@ while True:
     window.blit(display_cp, xy_change)
 
     pg.display.update()
-    dt = clock.tick(fps) / 1000
+    dt = clock.tick(FPS) / 1000

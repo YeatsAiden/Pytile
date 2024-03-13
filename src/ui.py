@@ -10,7 +10,6 @@ class Button:
         self.rect.topleft = [x, y]
         self.clicked = False
     
-
     def check_click(self):
         # get mouse position
         pos = list(pg.mouse.get_pos())
@@ -31,16 +30,15 @@ class Button:
         surf.blit(self.button_img, (self.rect.x, self.rect.y))
 
         
-class Text:
-    def __init__(self, fonts_path: str) -> None:
+class Font:
+    def __init__(self, path: str, include: list[int, int, int], step: int) -> None:
         self.characters = ["ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "0123456789", "!@#$%^&*()`~-_=+\\|[]}{';:/?.>,<"]
 
-        self.fonts = {}
-        self.fonts["smol_font"] = self.load_font(fonts_path + "/" + "smol_font.png", [1, 2, 3], 1)
+        self.font = self.load_font(path, include, step)
     
-
-    def load_font(self, path: str, include: list, step: int):
+    def load_font(self, path: str, include: list[int, int, int], step: int):
         font_img = pg.image.load(path).convert()
+        font_img.set_colorkey((0, 0, 0))
         characters = []
         font = {}
         x_pos = 0
@@ -64,14 +62,13 @@ class Text:
         
         return font
     
-
-    def draw_text(self, surface: pg.Surface, text: str, font: str, x: int, y: int, space: int, size: int):
+    def draw_text(self, surface: pg.Surface, text: str, x: int, y: int, space: int, size: int):
         x_pos = 0
         for letter in text:
             if letter == " ":
                 x_pos += space * size
             else:
-                character_img = pg.transform.scale_by(self.fonts[font][letter], size)
+                character_img = pg.transform.scale_by(self.font[letter], size)
                 surface.blit(character_img, (x + x_pos, y))
                 x_pos += character_img.get_width() + size
 
