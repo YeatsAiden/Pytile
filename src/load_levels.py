@@ -60,6 +60,8 @@ class Load_levels:
         for layer in level["layers"]:
             for tile in level["layers"][layer]["data"]:
                 x, y = map(int, tile.split(":"))
-                surf.blit(self.tile_sets[level["layers"][layer]["data"][tile]["tile_set"]][level["layers"][layer]["data"][tile]["tile_id"]], (x * self.tile_size - scroll.x, y * self.tile_size - scroll.y))
+                tile_set = level["layers"][layer]["data"][tile]["tile_set"]
+                tile_id = level["layers"][layer]["data"][tile]["tile_id"]
+                surf.blit(self.tile_sets[tile_set][tile_id], (x * self.tile_size - scroll.x, y * self.tile_size - scroll.y))
 
 

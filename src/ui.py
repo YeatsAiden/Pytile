@@ -4,13 +4,13 @@ from core_funcs import *
 
 
 class Button:
-    def __init__(self, x: int, y: int, surface_path: pg.Surface):
-        self.button_img = pg.image.load(surface_path).convert()
+    def __init__(self, path: str, x: int = 0, y: int = 0):
+        self.button_img = pg.image.load(path).convert_alpha()
         self.rect = self.button_img.get_rect()
         self.rect.topleft = [x, y]
         self.clicked = False
     
-    def check_click(self):
+    def check_click(self, mouse_pos, mouse_pressed):
         # get mouse position
         pos = list(pg.mouse.get_pos())
         mouse_pressed = pg.mouse.get_pressed()
@@ -25,6 +25,9 @@ class Button:
 
         # return if clicked
         return click
+    
+    def set_position(self, x: int, y: int):
+        self.rect.topleft = [x, y]
 
     def draw(self, surf: pg.Surface):
         surf.blit(self.button_img, (self.rect.x, self.rect.y))

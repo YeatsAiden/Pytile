@@ -17,3 +17,5 @@ FULL_SCREEN = False
 TILE_SIZE = 16
 
 FPS = 60
+
+MOUSE_VISIBLE = False

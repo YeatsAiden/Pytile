@@ -39,7 +39,7 @@ def load_images(path: str):
 
 def make_tileset_dict(tileset_path: str, tile_size: int):
     tileset = {}
-    tileset_img = pg.image.load(tileset_path).convert()
+    tileset_img = pg.image.load(tileset_path).convert_alpha()
     for y in range(0, tileset_img.get_height(), tile_size):
         for x in range(0, tileset_img.get_width(), tile_size):
             img = clip_img(tileset_img, x, y, tile_size, tile_size)
