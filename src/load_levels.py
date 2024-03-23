@@ -3,8 +3,9 @@ from core_funcs import *
 
 
 class Load_levels:
-    def __init__(self, tile_sets, levels_dir, tile_size) -> None:
+    def __init__(self, tile_sets: dict, levels_dir: str, tile_size: int) -> None:
         self.levels = {}
+
         for path in get_file_names(levels_dir):
             with open(levels_dir + '/' + path) as f:
                 level_json_data = json.load(f)
@@ -13,27 +14,23 @@ class Load_levels:
         self.tile_size = tile_size
         self.tile_sets = tile_sets
 
+        self.rects = self.make_rects_dict(self.levels)
 
-    def make_rects_array(self, layers, offset):
-        array = {}
-        collision_layer = {}
-
-        for layer in layers:
-            if layer["name"] == "middle_ground":
-                collision_layer = layer 
-
-        y = 0
-        for row in collision_layer["data"]:
-            x = 0
-            for tile in row:
-                if tile != 0:
-                    rect = pg.FRect((x + offset[0]) * self.tile_size, (y + offset[1]) * self.tile_size, self.tile_size, self.tile_size)
-                    array[f'{x}:{y}'] = rect
-                x += 1
-            y += 1
-
-        return array
-
+    def make_rects_dict(self, levels: dict):
+        rects = {}
+        for level in levels:
+            for layer in levels[level]["layers"]:
+                rects[level] = {
+                    "layers": {
+                        layer: []
+                    }
+                }
+                for tile in levels[level]["layers"][layer]["data"]:
+                    if levels[level]["layers"][layer]["data"][tile]["type"]:
+                        x, y = map(int, tile.split(":"))
+                        rect = pg.Rect(x, y, self.tile_size, self.tile_size)
+                        rects[level]["layers"][layer].append(rect)
+        return rects
 
     def get_area(self, surf, cam_pos, layers):
         # This finds the area on the map that will be rendered using your camera
@@ -59,14 +56,12 @@ class Load_levels:
 
         return areas, [start_col, start_row]
 
-
-    def draw_level(self, surf, cam_pos, offset, layers):
-        for layer in layers:
-            if layer["visible"]:
-                for y in range(0, len(layer['data'])):
-                    for x in range(0, len(layer['data'][y])):
-                        tile = layer['data'][y][x]
-                        if tile != 0:
-                            surf.blit(self.images_dict[tile], (x * self.tile_size, y * self.tile_size) - cam_pos + [offset[0] * self.tile_size, offset[1] * self.tile_size])
+    def draw_level(self, surf: pg.Surface, level: dict, scroll: pg.Vector2):
+        for layer in level["layers"]:
+            for tile in level["layers"][layer]["data"]:
+                x, y = map(int, tile.split(":"))
+                tile_set = level["layers"][layer]["data"][tile]["tile_set"]
+                tile_id = level["layers"][layer]["data"][tile]["tile_id"]
+                surf.blit(self.tile_sets[tile_set][tile_id], (x * self.tile_size - scroll.x, y * self.tile_size - scroll.y))
 
 
