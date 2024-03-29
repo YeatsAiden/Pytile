@@ -139,12 +139,13 @@ while True:
             
             if event.key == pg.K_e:
                 level_editor.type_id += 1
+                level_editor.type_id = max(0, min(len(level_editor.image_type) - 1, level_editor.type_id))  
                 level_editor.current_item = list(level_editor.types[level_editor.image_type[level_editor.type_id]])[0]
             if event.key == pg.K_q:
                 level_editor.type_id -= 1
+                level_editor.type_id = max(0, min(len(level_editor.image_type) - 1, level_editor.type_id))  
                 level_editor.current_item = list(level_editor.types[level_editor.image_type[level_editor.type_id]])[0]
-
-            level_editor.type_id = max(0, min(len(level_editor.image_type) - 1, level_editor.type_id))    
+  
 
     # Resizing display to window size
     display_cp, xy_change, scale = resize_surface(window, display)

@@ -79,7 +79,7 @@ class Editor:
                 "tile_set": self.current_item,
                 "id": self.tile_set_rules[self.current_item]["tile_id"]
             })
-        elif image_type == "objects":
+        else:
             self.levels[self.current_level][str(self.current_layer)][tile_pos_key].update({
                 "id": self.current_item
             })
@@ -112,7 +112,7 @@ class Editor:
                     for i in range(-1, 2):
                         for j in range(-1, 2):
                             if f"{x + j}:{y + i}" in self.levels[self.current_level][layer]:
-                                code += "1"
+                                code += "1" if self.levels[self.current_level][layer][f"{x + j}:{y + i}"]["type"] == "tiles" else "0"
                             else:
                                 code += "0"
                     tile_set = self.levels[self.current_level][layer][tile]["tile_set"]
@@ -141,7 +141,6 @@ class Editor:
                 x, y = map(int, tile.split(":"))
                 tile_type = self.levels[self.current_level][layer][tile]["type"]
                 tile_id = self.levels[self.current_level][layer][tile]["id"]
-                print(self.levels[self.current_level][layer][tile])
                 if tile_type == "tiles":
                     tile_set = self.levels[self.current_level][layer][tile]["tile_set"]
                     surf.blit(self.types[tile_type][tile_set][tile_id], (x * TILE_SIZE - cam_pos.x, y * TILE_SIZE - cam_pos.y))
