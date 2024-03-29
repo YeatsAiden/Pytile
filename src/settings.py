@@ -19,3 +19,14 @@ TILE_SIZE = 16
 FPS = 60
 
 MOUSE_VISIBLE = False
+
+current_dir = os.getcwd()
+PATHS = {
+    "tilesets": current_dir + "/assets/tilesets",
+    "levels": current_dir + "/assets/levels",
+    "fonts": current_dir + "/assets/fonts",
+    "buttons": current_dir + "/assets/buttons",
+    "cursors": current_dir + "/assets/cursor",
+    "objects": current_dir + "/assets/objects",
+    "spawns": current_dir + "/assets/spawns",
+}
