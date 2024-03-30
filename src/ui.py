@@ -1,28 +1,29 @@
+from typing import Any
 from settings import *
-import settings
 from core_funcs import *
 
 
 class Button:
-    def __init__(self, path: str, x: int = 0, y: int = 0):
-        self.button_img = pg.image.load(path).convert_alpha()
+    def __init__(self, image: str | pg.Surface, x: int = 0, y: int = 0) -> None:
+        if isinstance(image, str):
+            self.button_img = pg.image.load(image).convert_alpha()
+        else:
+            self.button_img = image
+
         self.rect = self.button_img.get_rect()
         self.rect.topleft = [x, y]
-        self.clicked = False
+
+        self.click_cooldown = 1
+        self.time_since_click = 0
+        
     
-    def check_click(self, mouse_pos, mouse_pressed):
-        # get mouse position
-        pos = list(pg.mouse.get_pos())
-        mouse_pressed = pg.mouse.get_pressed()
+    def check_click(self, mouse_pos, mouse_pressed, current_time):
         click = False
 
         # check mouseover and clicked conditions
-        if self.rect.collidepoint(pos) and mouse_pressed[0] and not self.clicked:
-            self.clicked = True
+        if self.rect.collidepoint(mouse_pos) and mouse_pressed[0] and (current_time - self.time_since_click) > self.click_cooldown:
+            self.time_since_click = time.time()
             click = True
-        else:
-            self.clicked = False
-
         # return if clicked
         return click
     
@@ -42,9 +43,12 @@ class Font:
     def load_font(self, path: str, include: list[int, int, int], step: int):
         font_img = pg.image.load(path).convert()
         font_img.set_colorkey((0, 0, 0))
+        
         characters = []
         font = {}
+
         x_pos = 0
+
         for x in range(font_img.get_width()):
             for y in range(font_img.get_height()):
                 color = font_img.get_at((x, y))
@@ -74,8 +78,3 @@ class Font:
                 character_img = pg.transform.scale_by(self.font[letter], size)
                 surface.blit(character_img, (x + x_pos, y))
                 x_pos += character_img.get_width() + size
-
-
-
-
-
